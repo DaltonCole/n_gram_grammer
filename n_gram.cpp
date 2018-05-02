@@ -24,24 +24,28 @@ N_gram::N_gram(string dir_path) {
 			string line;
 			// Open File
 			ifstream ifs(f.path().string().c_str());
+			// Create string buffer
+			stringstream buffer;
 
 			// If file is open
 			if(ifs) {
 				// Create vector of soon to be full trees
 				vector<shared_ptr<Tree> > baby_trees;
-				// Get each line in the file
-				while(getline(ifs, line)) {
-					// For each character
-					for(auto c : line) {
-						// Add a root node
-						if(same_value[c] == nullptr) {
-							baby_trees.push_back(shared_ptr<Tree>(new Tree(c)));
-							same_value[c] = baby_trees[baby_trees.size() - 1];
-						} else {
-							baby_trees.push_back(same_value[c]);
-						}
+
+				// Read in entire file as a buffer
+				buffer << ifs.rdbuf();
+				
+				// For each character in the buffer
+				for(const auto& c : buffer.str()) {
+					// Add a root node
+					if(same_value[c] == nullptr) {
+						baby_trees.push_back(shared_ptr<Tree>(new Tree(c)));
+						same_value[c] = baby_trees[baby_trees.size() - 1];
+					} else {
+						baby_trees.push_back(same_value[c]);
 					}
 				}
+				
 
 				// Add soon to be trees to the forest
 				this -> forest.push_back(baby_trees);
@@ -58,12 +62,12 @@ N_gram::N_gram(vector<string> all_strings) {
 	unordered_map<char, shared_ptr<Tree>> same_value;
 
 	// For each string
-	for(auto s : all_strings) {
+	for(const auto& s : all_strings) {
 		// Create vector of soon to be full trees
 		vector<shared_ptr<Tree> > baby_trees;
 
 		// For each character
-		for(auto c : s) {
+		for(const auto& c : s) {
 			// Add a root node
 			if(same_value[c] == nullptr) {
 				baby_trees.push_back(shared_ptr<Tree>(new Tree(c)));
@@ -81,40 +85,78 @@ N_gram::N_gram(vector<string> all_strings) {
 pair<shared_ptr<Tree>, shared_ptr<Tree> > N_gram::most_frequent() const {
 	// Create two_gram map of occurences
 	unordered_map<pair<shared_ptr<Tree>, shared_ptr<Tree> >, int, pair_hash> two_gram;
+	// Current pair we are looking at
+	pair<shared_ptr<Tree>, shared_ptr<Tree> > current_pair;
 	// Most frequently occuring pair
 	pair<shared_ptr<Tree>, shared_ptr<Tree> > highest_occurence;
 	int times_occured = -100;
+	int count;
 
 	// For each tree in the forest
-	for(auto t : this -> forest) {
+	for(const auto& t : this -> forest) {
 		// For each pair of consecutive baby trees
 		for(int i = 0; i < t.size() - 1; i++) {
-			for(int j = i + 1; j < t.size(); j++) {
-				// Increment pair count
-				two_gram[pair<shared_ptr<Tree>, shared_ptr<Tree> >(t[i], t[j])]++;
+			// Increment pair count
+			two_gram[pair<shared_ptr<Tree>, shared_ptr<Tree> >(t[i], t[i+1])]++;
+		}
+	}
 
-				// If new most frequently occuring node, update most frequntly occuring node variable
-				if(two_gram[pair<shared_ptr<Tree>, shared_ptr<Tree> >(t[i], t[j])] > times_occured) {
-					times_occured = two_gram[pair<shared_ptr<Tree>, shared_ptr<Tree> >(t[i], t[j])];
-					// NOTE CAN BE MADE MUCH FASTER BY USING POINTERS INSTEAD OF THE CONSTRUCTOR!
-					highest_occurence = pair<shared_ptr<Tree>, shared_ptr<Tree> >(t[i], t[j]);
-				}
-			}
+	for(const auto& set : two_gram) {
+		count = set.second;
+
+		// If new most frequently occuring node, update most frequntly occuring node variable
+		if(count > times_occured) {
+			times_occured = count;
+			highest_occurence = set.first;
 		}
 	}
 
 	return highest_occurence;
 }
 
+void N_gram::combine_trees(pair<shared_ptr<Tree>, shared_ptr<Tree> > set) {
+	// Make new tree node out of set pair
+	shared_ptr<Tree> new_node(new Tree(set.first, set.second));
+
+	for(auto& t : this -> forest) {
+		for(int i = 0; i < t.size() - 1; i++) {
+			if(t[i] == set.first && t[i+1] == set.second) {
+				t[i] = new_node;
+				t.erase(t.begin() + i + 1);
+			}
+		}
+	}
+
+	return;
+}
+
+void N_gram::make_forest() {
+	while(!all_trees_made()) {
+		auto set = most_frequent();
+		combine_trees(set);
+	}
+
+	return;
+}
+
+bool N_gram::all_trees_made() const {
+	for(const auto& t : this -> forest) {
+		if(t.size() != 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 void N_gram::print_each_char() const {
 	// For each tree in a forest
-	for(auto t : forest) {
+	for(const auto& t : forest) {
 		// Print each baby tree. When finished, there should only be one baby tree, which is a full tree
-		for(auto baby_t : t) {
+		for(const auto& baby_t : t) {
 			cout << *baby_t << " ";
 		}
-		cout << endl;
+		cout << endl << "--------------" << endl;
 	}
 
 	return;
@@ -122,9 +164,9 @@ void N_gram::print_each_char() const {
 
 void N_gram::print_each_addr() const {
 	// For each tree in a forest
-	for(auto t : forest) {
+	for(const auto& t : forest) {
 		// Print each baby tree. When finished, there should only be one baby tree, which is a full tree
-		for(auto baby_t : t) {
+		for(const auto& baby_t : t) {
 			cout << baby_t << " ";
 		}
 		cout << endl;

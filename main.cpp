@@ -16,13 +16,10 @@ int main() {
 	N_gram a(s);
 	*/
 
+	a.make_forest();
+
 	a.print_each_char();
 	a.print_each_addr();
-
-	pair<shared_ptr<Tree>, shared_ptr<Tree> > set = a.most_frequent();
-
-	cout << *set.first << endl;
-	cout << *set.second << endl;
 
 	/*
 	shared_ptr<Tree> b(new Tree('b'));// = new Tree('b');

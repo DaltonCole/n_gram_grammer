@@ -14,6 +14,7 @@ class Tree {
 	public:
 		Tree();
 		Tree(char v);
+		Tree(shared_ptr<Tree> l, shared_ptr<Tree> r);
 		Tree(char v, shared_ptr<Tree> l, shared_ptr<Tree> r);
 		Tree(const Tree& other);
 		~Tree();

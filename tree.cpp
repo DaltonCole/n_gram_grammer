@@ -14,8 +14,14 @@ Tree::Tree(char v) {
 	value = v;
 }
 
+Tree::Tree(shared_ptr<Tree> l, shared_ptr<Tree> r) {
+	// Set each branch
+	lhs = l;
+	rhs = r;
+}
+
 Tree::Tree(char v, shared_ptr<Tree> l, shared_ptr<Tree> r) {
-	// set root value and each branch
+	// Set root value and each branch
 	value = v;
 	lhs = l;
 	rhs = r;

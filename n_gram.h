@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <unordered_map>
 #include <utility>
 #include <boost/filesystem.hpp>
@@ -23,6 +24,9 @@ class N_gram {
 		N_gram(vector<string> s);
 
 		pair<shared_ptr<Tree>, shared_ptr<Tree> > most_frequent() const;
+		void combine_trees(pair<shared_ptr<Tree>, shared_ptr<Tree> > set);
+		void make_forest();
+		bool all_trees_made() const;
 
 		void print_each_char() const;
 		void print_each_addr() const;
