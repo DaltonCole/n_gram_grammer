@@ -9,7 +9,20 @@ using namespace std;
 int main() {
 	N_gram a("training/");
 
+	/*
+	vector<string> s;
+	s.push_back("<p>hi</p>");
+	s.push_back("<p>hello</p>");
+	N_gram a(s);
+	*/
+
 	a.print_each_char();
+	a.print_each_addr();
+
+	pair<shared_ptr<Tree>, shared_ptr<Tree> > set = a.most_frequent();
+
+	cout << *set.first << endl;
+	cout << *set.second << endl;
 
 	/*
 	shared_ptr<Tree> b(new Tree('b'));// = new Tree('b');
