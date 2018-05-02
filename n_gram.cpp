@@ -133,6 +133,20 @@ void N_gram::combine_trees(pair<shared_ptr<Tree>, shared_ptr<Tree> > set) {
 void N_gram::make_forest() {
 	while(!all_trees_made()) {
 		auto set = most_frequent();
+		/*
+		if(set.first -> lhs == nullptr && set.first -> lhs == nullptr) {
+			cout << set.first -> value;
+		} else {
+			cout << set.first;
+		}
+		cout << " ";
+		if(set.second -> lhs == nullptr && set.second -> lhs == nullptr) {
+			cout << set.second -> value;
+		} else {
+			cout << set.second;
+		}
+		cout << endl;
+		*/
 		combine_trees(set);
 	}
 
