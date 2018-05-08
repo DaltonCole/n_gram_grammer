@@ -30,6 +30,7 @@ class N_gram {
 
 		void print_each_char() const;
 		void print_each_addr() const;
+		void print_grammar_rules() const;
 
 	private:
 		vector<vector<shared_ptr<Tree> > > forest;

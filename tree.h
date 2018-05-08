@@ -25,6 +25,9 @@ class Tree {
 
 		friend ostream &operator<<(ostream &os, Tree t);
 
+		void recurive_rule_print() const;
+		bool is_leaf() const;
+
 		void add_left(shared_ptr<Tree> l);
 		void add_right(shared_ptr<Tree> r);
 

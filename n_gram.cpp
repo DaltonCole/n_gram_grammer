@@ -188,3 +188,24 @@ void N_gram::print_each_addr() const {
 
 	return;
 }
+
+void N_gram::print_grammar_rules() const {
+	// Start symbol
+	cout << "START -> ";
+	for(const auto& t : forest) {
+		for(const auto& baby_t : t) {
+			cout << baby_t << " | ";
+		}
+	}
+	cout << endl;
+
+	for(const auto& t : forest) {
+		for(const auto& baby_t : t) {
+			baby_t -> recurive_rule_print();
+		}
+	}
+
+	return;
+
+	// Sub-symbolts
+}

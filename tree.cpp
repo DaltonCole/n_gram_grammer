@@ -103,6 +103,35 @@ ostream &operator<<(ostream &os, Tree t) {
 	return os;
 }
 
+void Tree::recurive_rule_print() const {
+	cout << this << " -> ";
+	if(this -> is_leaf()) {
+		cout << this -> value << endl;
+	} else {
+		if(this -> lhs != nullptr) {
+			cout << this -> lhs  << " | ";
+		}
+		if(this -> rhs != nullptr) {
+			cout << this -> rhs << " | ";
+		}
+		cout << endl;
+
+		if(this -> lhs != nullptr) {
+			this -> lhs -> recurive_rule_print();
+		}
+		if(this -> rhs != nullptr) {
+			this -> rhs -> recurive_rule_print();
+		}
+	}
+}
+
+bool Tree::is_leaf() const {
+	if(this -> lhs == nullptr && this -> rhs == nullptr) {
+		return true;
+	}
+	return false;
+}
+
 void Tree::add_left(shared_ptr<Tree> l) {
 	if(lhs != nullptr) {
 		throw "LEFT HAND SIDE ALREADY EXISTS!"; 

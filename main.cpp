@@ -19,7 +19,11 @@ int main() {
 	a.make_forest();
 
 	a.print_each_char();
+	cout << endl;
 	a.print_each_addr();
+
+	cout << endl;
+	a.print_grammar_rules();
 
 	/*
 	shared_ptr<Tree> b(new Tree('b'));// = new Tree('b');
